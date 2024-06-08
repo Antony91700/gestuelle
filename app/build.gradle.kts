@@ -1,24 +1,33 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.example.gestuelle"
+    namespace = "com.gestuelle" // Ajoutez l'espace de noms
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.gestuelle"
+        applicationId = "com.gestuelle"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
+        vectorDrawables.useSupportLibrary = true
+        externalNativeBuild {
+            cmake {
+                cppFlags += "-std=c++17"
+            }
+        }
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
     }
+
+    // ... (le reste du fichier reste inchangé)
+
 
     buildTypes {
         release {
@@ -29,41 +38,61 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.3.3" // Version mise à jour
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
-}
 
-dependencies {
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+        }
+    }
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+
+    dependencies {
+        implementation("androidx.core:core-ktx:1.9.0")
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+        implementation("androidx.activity:activity-compose:1.6.1")
+        implementation("androidx.compose.ui:ui:1.3.3") // Version mise à jour
+        implementation("androidx.compose.ui:ui-graphics:1.3.3") // Version mise à jour
+        implementation("androidx.compose.ui:ui-tooling:1.3.3") // Version mise à jour
+        implementation("com.google.android.material:material:1.7.0")
+
+        implementation("com.google.mediapipe:mediapipe_android:0.8.11") // Vérifiez la dernière version
+        implementation("com.google.mediapipe:mediapipe_solution_base:0.8.11") // Vérifiez la dernière version
+        implementation("com.google.protobuf:protobuf-lite:3.0.1")
+        implementation("org.tensorflow:opencv:4.5.3")
+
+        testImplementation("junit:junit:4.13.2")
+        androidTestImplementation("androidx.test.ext:junit:1.1.3")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    }
 }

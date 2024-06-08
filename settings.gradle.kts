@@ -18,6 +18,15 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
+    repositories {
+        google()
+        mavenCentral()
+        // Ajoutez d'autres référentiels si nécessaire
+    }
+}
 
 rootProject.name = "Gestuelle"
 include(":app")
